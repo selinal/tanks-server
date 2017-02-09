@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.sbt.codeit.core.model.Tank;
+import com.sbt.codeit.core.model.World;
 
 import java.util.ArrayList;
 
@@ -17,16 +19,20 @@ import static com.sbt.codeit.core.util.MapLoader.getMap;
  */
 public class Drawer {
 
-    private Texture texture;
+    private World world;
+    private Texture wall;
+    private Texture tankTexture;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
     private int cellSize;
 
-    public Drawer() {
+    public Drawer(World world) {
+        this.world = world;
         camera = new OrthographicCamera();
         camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        texture = new Texture(Gdx.files.internal("brick.jpg"));
+        wall = new Texture(Gdx.files.internal("brick.jpg"));
+        tankTexture = new Texture(Gdx.files.internal("tank.png"));
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         cellSize = Gdx.graphics.getHeight() / getMap().size();
@@ -39,6 +45,7 @@ public class Drawer {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         drawMap();
+        drawTanks();
         batch.end();
         drawInfoPanel();
     }
@@ -52,13 +59,21 @@ public class Drawer {
     }
 
     private void drawMap() {
-        ArrayList<ArrayList<Character>> map = getMap();
+        ArrayList<ArrayList<Character>> map = world.getMap();
         for (int y = 0; y < map.size(); y++) {
             for (int x = 0; x < map.get(y).size(); x++) {
                 if(map.get(y).get(x).equals('#')) {
-                    batch.draw(texture, x * cellSize, y * cellSize, cellSize, cellSize);
+                    batch.draw(wall, x * cellSize, y * cellSize, cellSize, cellSize);
                 }
             }
+        }
+    }
+
+    private void drawTanks() {
+        for (Tank tank : world.getTanks()) {
+            batch.draw(tankTexture, tank.getX() * cellSize, tank.getY() * cellSize, cellSize / 2, cellSize / 2, cellSize, cellSize,
+                    1, 1, tank.getDirection().toRotation(), 0, 0, tankTexture.getWidth(), tankTexture.getHeight(),
+                    false, false);
         }
     }
 
