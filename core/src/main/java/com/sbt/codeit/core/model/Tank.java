@@ -11,12 +11,13 @@ public class Tank {
 
     private Vector2 previousPosition = new Vector2();
     private Vector2 position = new Vector2();
+    private int color;
+    private int model;
     private TankState state = TankState.STAYING;
     private TankDirection direction = TankDirection.DOWN;
 
     public Tank(float x, float y) {
-        position.x = x;
-        position.y = y;
+        position.set(x, y);
     }
 
     public int getX() {
@@ -49,6 +50,19 @@ public class Tank {
 
     public void setDirection(TankDirection direction) {
         this.direction = direction;
+    }
+
+    public void setType(int color, int model) {
+        this.color = color;
+        this.model = model;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public int getModel() {
+        return model;
     }
 
     public void move(ArrayList<ArrayList<Character>> map) {

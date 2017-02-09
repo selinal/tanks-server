@@ -7,16 +7,15 @@ import com.sbt.codeit.core.util.MapLoader;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by sbt-galimov-rr on 09.02.2017.
  */
 public class World {
 
-    private final HashMap<ServerListener, Tank> tanks = new HashMap<>();
+    private final ConcurrentHashMap<ServerListener, Tank> tanks = new ConcurrentHashMap<>();
     private final ArrayList<ArrayList<Character>> map = MapLoader.getMap();
     private final Random random = new Random();
 
@@ -39,6 +38,7 @@ public class World {
             default:
                 tank = new Tank(map.get(0).size() - 1, map.size() - 1);
         }
+        tank.setType(random.nextInt(3), random.nextInt(3));
         tanks.put(listener, tank);
     }
 

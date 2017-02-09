@@ -1,5 +1,6 @@
 package com.sbt.codeit.core.control;
 
+import com.sbt.codeit.core.model.Tank;
 import com.sbt.codeit.core.model.World;
 
 import java.rmi.RemoteException;
@@ -26,33 +27,50 @@ public class GameControllerImpl implements GameController {
 
     @Override
     public void start(ServerListener serverListener) throws RemoteException {
-        world.getTank(serverListener).setState(MOVING);
+        Tank tank = world.getTank(serverListener);
+        if(tank != null) {
+            tank.setState(MOVING);
+        }
     }
 
     @Override
     public void stop(ServerListener serverListener) throws RemoteException {
-        world.getTank(serverListener).setState(STAYING);
+        Tank tank = world.getTank(serverListener);
+        if(tank != null) {
+            tank.setState(STAYING);
+        }
     }
 
     @Override
     public void up(ServerListener serverListener) {
-        world.getTank(serverListener).setDirection(UP);
+        Tank tank = world.getTank(serverListener);
+        if(tank != null) {
+            tank.setDirection(UP);
+        }
     }
 
     @Override
     public void down(ServerListener serverListener) throws RemoteException {
-        world.getTank(serverListener).setDirection(DOWN);
+        Tank tank = world.getTank(serverListener);
+        if(tank != null) {
+            tank.setDirection(DOWN);
+        }
     }
 
     @Override
     public void left(ServerListener serverListener) throws RemoteException {
-        world.getTank(serverListener).setDirection(LEFT);
+        Tank tank = world.getTank(serverListener);
+        if(tank != null) {
+            tank.setDirection(LEFT);
+        }
     }
 
     @Override
     public void right(ServerListener serverListener) throws RemoteException {
-        world.getTank(serverListener).setDirection(RIGHT);
+        Tank tank = world.getTank(serverListener);
+        if(tank != null) {
+            tank.setDirection(RIGHT);
+        }
     }
-
 
 }
