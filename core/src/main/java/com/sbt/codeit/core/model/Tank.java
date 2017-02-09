@@ -11,7 +11,7 @@ public class Tank {
 
     private Vector2 previousPosition = new Vector2();
     private Vector2 position = new Vector2();
-    private TankState state = TankState.MOVING;
+    private TankState state = TankState.STAYING;
     private TankDirection direction = TankDirection.DOWN;
 
     public Tank(float x, float y) {
@@ -56,25 +56,29 @@ public class Tank {
         if(state == TankState.MOVING) {
             switch (direction) {
                 case UP:
-                    if (getY() > 0 && !map.get(getY() - 1).get(getX()).equals('#')) {
+                    if (getY() > 0 && isEmpty(map, getX(), getY() - 1)) {
                         position.y--;
                     }
                     break;
                 case DOWN:
-                    if (getY() < map.size() - 1 && !map.get(getY() + 1).get(getX()).equals('#')) {
+                    if (getY() < map.size() - 1 && isEmpty(map, getX(), getY() + 1)) {
                         position.y++;
                     }
                     break;
                 case LEFT:
-                    if (getX() > 0 && !map.get(getY()).get(getX() - 1).equals('#')) {
+                    if (getX() > 0 && isEmpty(map, getX() - 1, getY())) {
                         position.x--;
                     }
                     break;
                 case RIGHT:
-                    if (getX() < map.get(0).size() - 1 && !map.get(getY()).get(getX() + 1).equals('#')) {
+                    if (getX() < map.get(0).size() - 1 && isEmpty(map, getX() + 1, getY())) {
                         position.x++;
                     }
             }
         }
+    }
+
+    private boolean isEmpty(ArrayList<ArrayList<Character>> map, int x, int y) {
+        return map.get(y).get(x).equals(' ');
     }
 }

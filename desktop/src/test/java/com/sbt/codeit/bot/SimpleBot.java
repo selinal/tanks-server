@@ -3,10 +3,6 @@ package com.sbt.codeit.bot;
 import com.sbt.codeit.core.control.GameController;
 import com.sbt.codeit.core.control.ServerListener;
 
-import java.io.Serializable;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -31,29 +27,30 @@ public class SimpleBot implements ServerListener {
             Registry registry = LocateRegistry.getRegistry(HOST, PORT);
             server = (GameController) registry.lookup(STUB_NAME);
             client = (ServerListener) UnicastRemoteObject.exportObject(simpleBot, 0);
-            server.init(client);
-            randomMove();
+            server.register(client);
+            server.start(client);
+            randomDirection();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
 
-    public static void randomMove() throws Exception {
+    public static void randomDirection() throws Exception {
         Random random = new Random();
         while (true) {
             switch (random.nextInt(4)) {
                 case 0:
-                    server.moveUp(client);
+                    server.up(client);
                     break;
                 case 1:
-                    server.moveDown(client);
+                    server.down(client);
                     break;
                 case 2:
-                    server.moveLeft(client);
+                    server.left(client);
                     break;
                 case 3:
-                    server.moveRight(client);
+                    server.right(client);
             }
             TimeUnit.SECONDS.sleep(1);
         }
