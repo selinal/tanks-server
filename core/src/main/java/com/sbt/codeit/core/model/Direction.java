@@ -3,7 +3,7 @@ package com.sbt.codeit.core.model;
 /**
  * Created by SBT-Galimov-RR on 09.02.2017.
  */
-public enum TankDirection {
+public enum Direction {
 
     UP(0),
     DOWN(180),
@@ -12,7 +12,7 @@ public enum TankDirection {
 
     private int rotation;
 
-    TankDirection(int rotation) {
+    Direction(int rotation) {
         this.rotation = rotation;
     }
 

@@ -5,7 +5,7 @@ import com.sbt.codeit.core.model.World;
 
 import java.rmi.RemoteException;
 
-import static com.sbt.codeit.core.model.TankDirection.*;
+import static com.sbt.codeit.core.model.Direction.*;
 import static com.sbt.codeit.core.model.TankState.MOVING;
 import static com.sbt.codeit.core.model.TankState.STAYING;
 

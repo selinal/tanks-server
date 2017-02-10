@@ -8,12 +8,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.sbt.codeit.core.model.Bullet;
 import com.sbt.codeit.core.model.Tank;
 import com.sbt.codeit.core.model.World;
 
 import java.util.ArrayList;
 
-import static com.sbt.codeit.core.util.MapLoader.getMap;
+import static com.sbt.codeit.core.util.MapHelper.getMap;
 
 /**
  * Created by sbt-galimov-rr on 08.02.2017.
@@ -22,6 +23,7 @@ public class Drawer {
 
     private World world;
     private Texture wall;
+    private Texture bulletTexture;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
@@ -33,6 +35,7 @@ public class Drawer {
         camera = new OrthographicCamera();
         camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         wall = new Texture(Gdx.files.internal("brick.jpg"));
+        bulletTexture = new Texture(Gdx.files.internal("bullet.png"));
         tanks = TextureRegion.split(new Texture(Gdx.files.internal("tanks.png")), 60, 80);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
@@ -75,6 +78,14 @@ public class Drawer {
         for (Tank tank : world.getTanks()) {
             batch.draw(tanks[tank.getColor()][tank.getModel()], tank.getX() * cellSize, tank.getY() * cellSize, cellSize * Tank.SIZE / 2, cellSize * Tank.SIZE / 2,
                     cellSize * Tank.SIZE, cellSize * Tank.SIZE, 1, 1, tank.getDirection().toRotation());
+            drawBullets(tank);
+        }
+    }
+
+    private void drawBullets(Tank tank) {
+        for (Bullet bullet : tank.bullets) {
+            batch.draw(bulletTexture, bullet.getX() * cellSize, bullet.getY() * cellSize, cellSize / 2, cellSize / 2, cellSize, cellSize, 1, 1,
+                    bullet.getDirection().toRotation(), 0, 0, bulletTexture.getWidth(), bulletTexture.getHeight(), false, false);
         }
     }
 

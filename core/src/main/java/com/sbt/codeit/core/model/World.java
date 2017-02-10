@@ -2,7 +2,7 @@ package com.sbt.codeit.core.model;
 
 import com.badlogic.gdx.utils.Timer;
 import com.sbt.codeit.core.control.ServerListener;
-import com.sbt.codeit.core.util.MapLoader;
+import com.sbt.codeit.core.util.MapHelper;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import static com.sbt.codeit.core.model.Tank.SIZE;
 public class World {
 
     private final ConcurrentHashMap<ServerListener, Tank> tanks = new ConcurrentHashMap<>();
-    private final ArrayList<ArrayList<Character>> map = MapLoader.getMap();
+    private final ArrayList<ArrayList<Character>> map = MapHelper.getMap();
     private final Random random = new Random();
 
     public ArrayList<ArrayList<Character>> getMap() {
@@ -54,7 +54,7 @@ public class World {
 
     private void update() {
         for (Tank tank : tanks.values()) {
-            tank.moveIfPossible(map);
+            tank.update(map);
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
                     map.get(tank.getPreviousY() + i).set(tank.getPreviousX() + j, ' ');
@@ -75,6 +75,24 @@ public class World {
         }
     }
 
+    private void updateBullets() {
+        for (Tank tank : tanks.values()) {
+            if(!tank.bullets.isEmpty()) {
+                for (Bullet bullet : tank.bullets) {
+                    bullet.move();
+                    if(bullet.getX() > 0 && bullet.getY() > 0 && bullet.getY() < map.size() && bullet.getX() < map.get(0).size()) {
+                        if(MapHelper.isEmpty(map, bullet.getX(), bullet.getY())) {
+                            map.get(bullet.getPreviousY()).set(bullet.getPreviousX(), ' ');
+                            map.get(bullet.getY()).set(bullet.getX(), 'x');
+                        } else {
+                            bullet.explode(map);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public void live() {
         Timer.schedule(new Timer.Task(){
             @Override
@@ -82,5 +100,20 @@ public class World {
                 update();
             }
         }, 0, 0.12F);
+        Timer.schedule(new Timer.Task(){
+            @Override
+            public void run() {
+                updateBullets();
+            }
+        }, 0, 0.06F);
+        Timer.schedule(new Timer.Task(){
+            @Override
+            public void run() {
+                for (Tank tank : tanks.values()) {
+                    tank.fire();
+                }
+            }
+        }, 0, 2F);
     }
+
 }

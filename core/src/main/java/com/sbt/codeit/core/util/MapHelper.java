@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 /**
  * Created by sbt-galimov-rr on 08.02.2017.
  */
-public class MapLoader {
+public class MapHelper {
 
     private static ArrayList<ArrayList<Character>> map = new ArrayList<>();
 
@@ -21,6 +21,16 @@ public class MapLoader {
                     map.add(line.chars().mapToObj(ch -> (char) ch).collect(Collectors.toCollection(ArrayList::new))));
         }
         return map;
+    }
+
+    public static boolean isEmpty(ArrayList<ArrayList<Character>> map, float x, float y) {
+        Character character = map.get((int) y).get((int) x);
+        return character.equals(' ') || character.equals('x');
+    }
+
+    public static boolean isWall(ArrayList<ArrayList<Character>> map, float x, float y) {
+        Character character = map.get((int) y).get((int) x);
+        return character.equals('#');
     }
 
 }
