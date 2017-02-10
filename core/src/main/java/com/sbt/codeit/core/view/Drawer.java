@@ -25,7 +25,7 @@ public class Drawer {
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
-    private int cellSize;
+    private float cellSize;
     private final TextureRegion[][] tanks;
 
     public Drawer(World world) {
@@ -36,7 +36,7 @@ public class Drawer {
         tanks = TextureRegion.split(new Texture(Gdx.files.internal("tanks.png")), 60, 80);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        cellSize = Gdx.graphics.getHeight() / getMap().size();
+        cellSize = Gdx.graphics.getHeight() / (float)getMap().size();
     }
 
     public void draw() {
@@ -54,7 +54,7 @@ public class Drawer {
     private void drawInfoPanel() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.DARK_GRAY);
-        int rightEdgeOfField = getMap().get(0).size() * cellSize;
+        float rightEdgeOfField = getMap().get(0).size() * cellSize;
         shapeRenderer.rect(rightEdgeOfField, 0, Gdx.graphics.getWidth() - rightEdgeOfField, Gdx.graphics.getHeight());
         shapeRenderer.end();
     }
@@ -64,7 +64,8 @@ public class Drawer {
         for (int y = 0; y < map.size(); y++) {
             for (int x = 0; x < map.get(y).size(); x++) {
                 if(map.get(y).get(x).equals('#')) {
-                    batch.draw(wall, x * cellSize, y * cellSize, cellSize, cellSize);
+                    batch.draw(wall, x * cellSize, y * cellSize, cellSize, cellSize, 0, 0,
+                            wall.getWidth() / Tank.SIZE, wall.getHeight() / Tank.SIZE, false, false);
                 }
             }
         }
@@ -72,8 +73,8 @@ public class Drawer {
 
     private void drawTanks() {
         for (Tank tank : world.getTanks()) {
-            batch.draw(tanks[tank.getColor()][tank.getModel()], tank.getX() * cellSize, tank.getY() * cellSize, cellSize / 2, cellSize / 2,
-                    cellSize, cellSize, 1, 1, tank.getDirection().toRotation());
+            batch.draw(tanks[tank.getColor()][tank.getModel()], tank.getX() * cellSize, tank.getY() * cellSize, cellSize * Tank.SIZE / 2, cellSize * Tank.SIZE / 2,
+                    cellSize * Tank.SIZE, cellSize * Tank.SIZE, 1, 1, tank.getDirection().toRotation());
         }
     }
 
