@@ -15,5 +15,6 @@ public interface GameController extends Remote {
     void down(ServerListener serverListener) throws RemoteException;
     void left(ServerListener serverListener) throws RemoteException;
     void right(ServerListener serverListener) throws RemoteException;
+    void fire(ServerListener serverListener) throws RemoteException;
 
 }

@@ -3,6 +3,7 @@ package com.sbt.codeit.bot;
 import com.sbt.codeit.core.control.GameController;
 import com.sbt.codeit.core.control.ServerListener;
 
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -38,6 +39,16 @@ public class SimpleBot implements ServerListener {
 
     public static void randomDirection() throws Exception {
         Random random = new Random();
+        new Thread(() -> {
+            try {
+                while (true) {
+                    server.fire(client);
+                    TimeUnit.SECONDS.sleep(2);
+                }
+            } catch (RemoteException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
         while (true) {
             switch (random.nextInt(4)) {
                 case 0:

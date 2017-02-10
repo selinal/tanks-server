@@ -39,7 +39,7 @@ public class Drawer {
         tanks = TextureRegion.split(new Texture(Gdx.files.internal("tanks.png")), 60, 80);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        cellSize = Gdx.graphics.getHeight() / (float)getMap().size();
+        cellSize = Gdx.graphics.getHeight() / (float) getMap().size();
     }
 
     public void draw() {
@@ -66,7 +66,7 @@ public class Drawer {
         ArrayList<ArrayList<Character>> map = world.getMap();
         for (int y = 0; y < map.size(); y++) {
             for (int x = 0; x < map.get(y).size(); x++) {
-                if(map.get(y).get(x).equals('#')) {
+                if (map.get(y).get(x).equals('#')) {
                     batch.draw(wall, x * cellSize, y * cellSize, cellSize, cellSize, 0, 0,
                             wall.getWidth() / Tank.SIZE, wall.getHeight() / Tank.SIZE, false, false);
                 }
@@ -83,10 +83,10 @@ public class Drawer {
     }
 
     private void drawBullets(Tank tank) {
-        for (Bullet bullet : tank.bullets) {
-            batch.draw(bulletTexture, bullet.getX() * cellSize, bullet.getY() * cellSize, cellSize / 2, cellSize / 2, cellSize, cellSize, 1, 1,
-                    bullet.getDirection().toRotation(), 0, 0, bulletTexture.getWidth(), bulletTexture.getHeight(), false, false);
-        }
+        tank.getBullets().stream().filter(Bullet::isAvailable).forEach(bullet ->
+                batch.draw(bulletTexture, bullet.getX() * cellSize, bullet.getY() * cellSize, cellSize / 2, cellSize / 2, cellSize, cellSize, 1, 1,
+                        bullet.getDirection().toRotation(), 0, 0, bulletTexture.getWidth(), bulletTexture.getHeight(), false, false)
+        );
     }
 
 }

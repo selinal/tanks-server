@@ -1,8 +1,10 @@
 package com.sbt.codeit.core.model;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static com.sbt.codeit.core.util.MapHelper.isEmpty;
 
@@ -11,12 +13,15 @@ import static com.sbt.codeit.core.util.MapHelper.isEmpty;
  */
 public class Tank {
 
-    public static int SIZE = 3;
+    public static final int SIZE = 3;
+    private static final int MAX_SHOTS = 10;
+
     private Vector2 previousPosition = new Vector2();
-    public ArrayList<Bullet> bullets = new ArrayList<>();
+    private ArrayList<Bullet> bullets = new ArrayList<>();
     private ArrayList<ArrayList<Vector2>> points = new ArrayList<>();
     private int color;
     private int model;
+    private volatile boolean canFire = true;
     private TankState state = TankState.STAYING;
     private Direction direction = Direction.DOWN;
 
@@ -26,6 +31,9 @@ public class Tank {
             for (int j = 0; j < SIZE; j++) {
                 points.get(i).add(new Vector2(x + j, y + i));
             }
+        }
+        for (int i = 0; i < MAX_SHOTS; i++) {
+            bullets.add(new Bullet());
         }
     }
 
@@ -38,19 +46,15 @@ public class Tank {
     }
 
     public int getPreviousX() {
-        return (int)previousPosition.x;
+        return (int) previousPosition.x;
     }
 
     public int getPreviousY() {
-        return (int)previousPosition.y;
+        return (int) previousPosition.y;
     }
 
     public void setState(TankState state) {
         this.state = state;
-    }
-
-    public TankState getState() {
-        return state;
     }
 
     public Direction getDirection() {
@@ -74,9 +78,13 @@ public class Tank {
         return model;
     }
 
+    public ArrayList<Bullet> getBullets() {
+        return bullets;
+    }
+
     public void update(ArrayList<ArrayList<Character>> map) {
         previousPosition.set(getX(), getY());
-        if(state == TankState.MOVING) {
+        if (state == TankState.MOVING) {
             switch (direction) {
                 case UP:
                     if (isNotOnTheEdgeUp() && points.get(0).stream().allMatch(vectors -> isEmpty(map, vectors.x, getY() - 1))) {
@@ -99,16 +107,21 @@ public class Tank {
                     }
             }
         }
-        for (Bullet bullet : bullets) {
-            if(bullet.isExploded()){
-                bullets.remove(bullet);
-                break;
-            }
-        }
     }
 
     public void fire() {
-        bullets.add(new Bullet(getX(), getY(), direction));
+        if (!canFire) {
+            return;
+        }
+        canFire = false;
+        Optional<Bullet> availableBullet = bullets.stream().filter(bullet -> !bullet.isAvailable()).findFirst();
+        availableBullet.ifPresent(bullet -> bullet.setUp(getX(), getY(), direction));
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                canFire = true;
+            }
+        }, 2F);
     }
 
     private boolean isNotOnTheEdgeRight(ArrayList<ArrayList<Character>> map) {

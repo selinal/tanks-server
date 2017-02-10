@@ -77,43 +77,35 @@ public class World {
 
     private void updateBullets() {
         for (Tank tank : tanks.values()) {
-            if(!tank.bullets.isEmpty()) {
-                for (Bullet bullet : tank.bullets) {
-                    bullet.move();
-                    if(bullet.getX() > 0 && bullet.getY() > 0 && bullet.getY() < map.size() && bullet.getX() < map.get(0).size()) {
-                        if(MapHelper.isEmpty(map, bullet.getX(), bullet.getY())) {
-                            map.get(bullet.getPreviousY()).set(bullet.getPreviousX(), ' ');
-                            map.get(bullet.getY()).set(bullet.getX(), 'x');
-                        } else {
-                            bullet.explode(map);
-                        }
+            tank.getBullets().stream().filter(Bullet::isAvailable).forEach(bullet -> {
+                bullet.update();
+                if (bullet.getX() > 0 && bullet.getY() > 0 && bullet.getY() < map.size() && bullet.getX() < map.get(0).size()) {
+                    if (MapHelper.isEmpty(map, bullet.getX(), bullet.getY())) {
+                        map.get(bullet.getPreviousY()).set(bullet.getPreviousX(), ' ');
+                        map.get(bullet.getY()).set(bullet.getX(), 'x');
+                    } else {
+                        bullet.explode(map);
                     }
+                } else {
+                    bullet.setAvailable(false);
                 }
-            }
+            });
         }
     }
 
-    public void live() {
-        Timer.schedule(new Timer.Task(){
-            @Override
-            public void run() {
-                update();
-            }
-        }, 0, 0.12F);
-        Timer.schedule(new Timer.Task(){
-            @Override
-            public void run() {
-                updateBullets();
-            }
-        }, 0, 0.06F);
-        Timer.schedule(new Timer.Task(){
-            @Override
-            public void run() {
-                for (Tank tank : tanks.values()) {
-                    tank.fire();
+    public void live () {
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    update();
                 }
-            }
-        }, 0, 2F);
-    }
+            }, 0, 0.12F);
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    updateBullets();
+                }
+            }, 0, 0.10F);
+        }
 
-}
+    }

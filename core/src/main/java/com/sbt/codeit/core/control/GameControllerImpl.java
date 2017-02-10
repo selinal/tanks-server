@@ -73,4 +73,12 @@ public class GameControllerImpl implements GameController {
         }
     }
 
+    @Override
+    public void fire(ServerListener serverListener) throws RemoteException {
+        Tank tank = world.getTank(serverListener);
+        if(tank != null) {
+            tank.fire();
+        }
+    }
+
 }
