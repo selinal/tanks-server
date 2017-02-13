@@ -1,10 +1,11 @@
 package com.sbt.codeit.core.model;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Timer;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.sbt.codeit.core.util.FieldHelper.isEmpty;
 
@@ -16,7 +17,7 @@ public class Tank extends GameObject {
     public static final int SIZE = 3;
     public static final float SPEED = 8F;
 
-    private static final float FIRE_DELAY = 2F;
+    private static final long FIRE_DELAY = 2000;
     private static final int MAX_SHOTS = 10;
 
     private ArrayList<Bullet> bullets = new ArrayList<>();
@@ -63,7 +64,7 @@ public class Tank extends GameObject {
             canFire = false;
             Optional<Bullet> availableBullet = bullets.stream().filter(bullet -> !bullet.isAvailable()).findFirst();
             availableBullet.ifPresent(bullet -> bullet.setUp(getX(), getY(), direction));
-            Timer.schedule(new Timer.Task() {
+            new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
                     canFire = true;

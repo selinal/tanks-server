@@ -1,13 +1,10 @@
 package com.sbt.codeit.core.model;
 
-import com.badlogic.gdx.utils.Timer;
 import com.sbt.codeit.core.control.ServerListener;
 import com.sbt.codeit.core.util.FieldHelper;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.sbt.codeit.core.util.FieldHelper.FIELD_HEIGHT;
@@ -27,18 +24,18 @@ public class World {
     }
 
     public void startUpdates() {
-        Timer.schedule(new Timer.Task() {
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 updateTanks();
             }
-        }, 0, 1 / Tank.SPEED);
-        Timer.schedule(new Timer.Task() {
+        }, 0, (long)(1 / Tank.SPEED * 1000));
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 updateBullets();
             }
-        }, 0, 1 / Bullet.SPEED);
+        }, 0, (long)(1 / Bullet.SPEED * 1000));
     }
 
     public void addTank(ServerListener listener) {
