@@ -11,10 +11,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.sbt.codeit.core.model.Bullet;
 import com.sbt.codeit.core.model.Tank;
 import com.sbt.codeit.core.model.World;
+import com.sbt.codeit.core.util.FieldHelper;
 
 import java.util.ArrayList;
-
-import static com.sbt.codeit.core.util.MapHelper.getMap;
 
 /**
  * Created by sbt-galimov-rr on 08.02.2017.
@@ -39,7 +38,7 @@ public class Drawer {
         tanks = TextureRegion.split(new Texture(Gdx.files.internal("tanks.png")), 60, 80);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        cellSize = Gdx.graphics.getHeight() / (float) getMap().size();
+        cellSize = Gdx.graphics.getHeight() / (float) FieldHelper.FIELD_HEIGHT;
     }
 
     public void draw() {
@@ -57,13 +56,13 @@ public class Drawer {
     private void drawInfoPanel() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.DARK_GRAY);
-        float rightEdgeOfField = getMap().get(0).size() * cellSize;
+        float rightEdgeOfField = FieldHelper.FIELD_WIDTH * cellSize;
         shapeRenderer.rect(rightEdgeOfField, 0, Gdx.graphics.getWidth() - rightEdgeOfField, Gdx.graphics.getHeight());
         shapeRenderer.end();
     }
 
     private void drawMap() {
-        ArrayList<ArrayList<Character>> map = world.getMap();
+        ArrayList<ArrayList<Character>> map = world.getField();
         for (int y = 0; y < map.size(); y++) {
             for (int x = 0; x < map.get(y).size(); x++) {
                 if (map.get(y).get(x).equals('#')) {

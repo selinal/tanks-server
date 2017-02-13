@@ -15,7 +15,7 @@ public class TanksGame extends Game {
 	@Override
 	public void create () {
 		world = new World();
-		world.live();
+		world.startUpdates();
 		drawer = new Drawer(world);
 		GameControllerImpl controller = new GameControllerImpl(world);
 		new RMIServer(controller).start();

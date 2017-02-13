@@ -1,41 +1,23 @@
 package com.sbt.codeit.core.model;
 
 import com.badlogic.gdx.math.Vector2;
-import com.sbt.codeit.core.util.MapHelper;
+import com.sbt.codeit.core.util.FieldHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static com.sbt.codeit.core.model.Tank.SIZE;
 
 /**
  * Created by SBT-Galimov-RR on 10.02.2017.
  */
-public class Bullet {
+public class Bullet extends GameObject {
 
-    private Vector2 position = new Vector2();
-    private Vector2 previous = new Vector2();
-    private Vector2 velocity = new Vector2();
-    private Direction direction;
+    public static final float SPEED = 10;
     private boolean available;
 
-    public int getX() {
-        return (int)position.x;
-    }
-
-    public int getY() {
-        return (int)position.y;
-    }
-
-    public int getPreviousX() {
-        return (int)previous.x;
-    }
-
-    public int getPreviousY() {
-        return (int)previous.y;
-    }
-
-    public Direction getDirection() {
-        return direction;
+    public Bullet() {
+        position.add(new ArrayList<>(Collections.singletonList(new Vector2())));
     }
 
     public boolean isAvailable() {
@@ -47,57 +29,67 @@ public class Bullet {
     }
 
     public void setUp(int x, int y, Direction direction) {
-        this.direction = direction;
+        setDirection(direction);
         setAvailable(true);
+        int posX = x + SIZE / 2;
+        int posY = y + SIZE / 2;
         switch (direction){
             case UP:
-                position.set(x + SIZE / 2, y - 1);
-                velocity.set(0, -1);
+                posY = y - 1;
                 break;
             case DOWN:
-                position.set(x + SIZE / 2, y + SIZE);
-                velocity.set(0, 1);
+                posY = y + SIZE;
                 break;
             case LEFT:
-                position.set(x - 1, y + SIZE / 2);
-                velocity.set(-1, 0);
+                posX = x - 1;
                 break;
-            case RIGHT:
-                position.set(x + SIZE, y + SIZE / 2);
-                velocity.set(1, 0);
+            default:
+                posX = x + SIZE;
+        }
+        position.get(0).get(0).set(posX, posY);
+    }
+
+    @Override
+    public void update(ArrayList<ArrayList<Character>> field) {
+        super.update(field);
+        if (isOnTheField()) {
+            fixStuck();
+            if (!FieldHelper.isEmpty(field, getX(), getY())) {
+                explode();
+            }
+        } else {
+            setAvailable(false);
         }
     }
 
-    public void explode(ArrayList<ArrayList<Character>> map) {
+    private void fixStuck() {
+        if(FieldHelper.isWall(field, getPreviousX(), getPreviousY())) {
+            position.get(0).get(0).set(getPreviousX(), getPreviousY());
+        }
+    }
+
+    public boolean isOnTheField() {
+        return getX() >= 0 && getY() >= 0 && getY() < FieldHelper.FIELD_HEIGHT && getX() < FieldHelper.FIELD_WIDTH;
+    }
+
+    public void explode() {
         if(!isAvailable()) {
             return;
         }
-        fixStuck(map);
         if(direction == Direction.UP || direction == Direction.DOWN) {
             for (int x = getX() - SIZE / 2; x <= getX() + SIZE / 2; x++) {
-                if(MapHelper.isWall(map, x, getY())) {
-                    map.get(getY()).set(x, ' ');
+                if(FieldHelper.isWall(field, x, getY())) {
+                    field.get(getY()).set(x, ' ');
                 }
             }
         } else {
             for (int y = getY() - SIZE / 2; y <= getY() + SIZE / 2; y++) {
-                if(MapHelper.isWall(map, getX(), y)) {
-                    map.get(y).set(getX(), ' ');
+                if(FieldHelper.isWall(field, getX(), y)) {
+                    field.get(y).set(getX(), ' ');
                 }
             }
         }
         setAvailable(false);
-    }
-
-    private void fixStuck(ArrayList<ArrayList<Character>> map) {
-        if(MapHelper.isWall(map, getPreviousX(), getPreviousY())) {
-            position.set(getPreviousX(), getPreviousY());
-        }
-    }
-
-    public void update() {
-        previous.set(position.x, position.y);
-        position.add(velocity);
     }
 
 }

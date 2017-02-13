@@ -43,7 +43,7 @@ public class SimpleBot implements ServerListener {
             try {
                 while (true) {
                     server.fire(client);
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.MILLISECONDS.sleep(2500);
                 }
             } catch (RemoteException | InterruptedException e) {
                 e.printStackTrace();
