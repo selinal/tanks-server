@@ -19,6 +19,12 @@ public class World implements TankExplodeListener {
     private final ArrayList<ArrayList<Character>> field = FieldHelper.loadField();
     private final Random random = new Random();
 
+    private int currentColor;
+
+    public World() {
+        currentColor = random.nextInt(3);
+    }
+
     public ArrayList<ArrayList<Character>> getField() {
         return field;
     }
@@ -63,7 +69,9 @@ public class World implements TankExplodeListener {
                 x = FIELD_WIDTH - Tank.SIZE;
                 y = FIELD_HEIGHT - Tank.SIZE;
         }
-        return new Tank(this, x, y, name, random.nextInt(3), random.nextInt(3));
+        Tank tank = new Tank(this, x, y, name, currentColor, random.nextInt(3));
+        currentColor = currentColor < 2 ? currentColor + 1 : 0;
+        return tank;
     }
 
     public Tank getTank(ServerListener listener) {
