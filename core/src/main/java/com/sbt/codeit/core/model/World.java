@@ -13,7 +13,7 @@ import static com.sbt.codeit.core.util.FieldHelper.FIELD_WIDTH;
 /**
  * Created by sbt-galimov-rr on 09.02.2017.
  */
-public class World {
+public class World implements TankExplodeListener {
 
     private final ConcurrentHashMap<ServerListener, Tank> tanks = new ConcurrentHashMap<>();
     private final ArrayList<ArrayList<Character>> field = FieldHelper.loadField();
@@ -29,13 +29,13 @@ public class World {
             public void run() {
                 updateTanks();
             }
-        }, 0, (long)(1 / Tank.SPEED * 1000));
+        }, 0, (long) (1 / Tank.SPEED * 1000));
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 updateBullets();
             }
-        }, 0, (long)(1 / Bullet.SPEED * 1000));
+        }, 0, (long) (1 / Bullet.SPEED * 1000));
     }
 
     public void addTank(ServerListener listener, String name) {
@@ -63,7 +63,7 @@ public class World {
                 x = FIELD_WIDTH - Tank.SIZE;
                 y = FIELD_HEIGHT - Tank.SIZE;
         }
-        return new Tank(x, y, name, random.nextInt(3), random.nextInt(3));
+        return new Tank(this, x, y, name, random.nextInt(3), random.nextInt(3));
     }
 
     public Tank getTank(ServerListener listener) {
@@ -76,11 +76,14 @@ public class World {
 
     private void updateTanks() {
         for (Tank tank : tanks.values()) {
+            if(tank.getState() == TankState.EXPLODED) {
+                continue;
+            }
             tank.update(field);
             for (int i = 0; i < Tank.SIZE; i++) {
                 for (int j = 0; j < Tank.SIZE; j++) {
                     FieldHelper.clearCell(field, tank.getPreviousX() + j, tank.getPreviousY() + i);
-                    FieldHelper.addTankToCell(field, tank.getX() + j, tank.getY() + i);
+                    FieldHelper.addTankToCell(field, tank.getName(), tank.getX() + j, tank.getY() + i);
                 }
             }
         }
@@ -107,6 +110,27 @@ public class World {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void hit(Tank owner, int x, int y) {
+        Tank tank = getTankByChar(field.get(y).get(x));
+        tank.setState(TankState.EXPLODED);
+        for (int i = 0; i < Tank.SIZE; i++) {
+            for (int j = 0; j < Tank.SIZE; j++) {
+                FieldHelper.clearCell(field, tank.getPreviousX() + j, tank.getPreviousY() + i);
+                FieldHelper.clearCell(field, tank.getX() + j, tank.getY() + i);
+            }
+        }
+    }
+
+    private Tank getTankByChar(Character character) {
+        for (Tank tank : getTanks()) {
+            if(tank.getName().charAt(0) == character.charValue()) {
+                return tank;
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
 }

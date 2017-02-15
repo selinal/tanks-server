@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.sbt.codeit.core.model.Bullet;
 import com.sbt.codeit.core.model.Tank;
+import com.sbt.codeit.core.model.TankState;
 import com.sbt.codeit.core.model.World;
 import com.sbt.codeit.core.util.FieldHelper;
 
@@ -80,6 +81,9 @@ public class Drawer {
 
     private void drawTanks() {
         for (Tank tank : world.getTanks()) {
+            if(tank.getState() == TankState.EXPLODED) {
+                continue;
+            }
             batch.draw(tanks[tank.getColor()][tank.getModel()], tank.getX() * cellSize, tank.getY() * cellSize, cellSize * Tank.SIZE / 2, cellSize * Tank.SIZE / 2,
                     cellSize * Tank.SIZE, cellSize * Tank.SIZE, 1, 1, tank.getDirection().toRotation());
             drawBullets(tank);

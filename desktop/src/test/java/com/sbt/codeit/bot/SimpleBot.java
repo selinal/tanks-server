@@ -28,7 +28,7 @@ public class SimpleBot implements ServerListener {
             Registry registry = LocateRegistry.getRegistry(HOST, PORT);
             server = (GameController) registry.lookup(STUB_NAME);
             client = (ServerListener) UnicastRemoteObject.exportObject(simpleBot, 0);
-            server.register(client, "SimpleBot");
+            server.register(client, createName());
             server.start(client);
             randomDirection();
         } catch (Exception e) {
@@ -67,9 +67,14 @@ public class SimpleBot implements ServerListener {
         }
     }
 
-
     @Override
     public void update(ArrayList<ArrayList<Character>> field) {
         //nothing
+    }
+
+    private static String createName() {
+        byte[] bytes = new byte[20];
+        new Random().nextBytes(bytes);
+        return new String(bytes);
     }
 }

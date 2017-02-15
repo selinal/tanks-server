@@ -27,7 +27,7 @@ public class Tank extends GameObject {
     private int color;
     private int model;
 
-    public Tank(float x, float y, String name, int color, int model) {
+    public Tank(TankExplodeListener explodeListener, float x, float y, String name, int color, int model) {
         this.name = name;
         this.color = color;
         this.model = model;
@@ -38,12 +38,16 @@ public class Tank extends GameObject {
             }
         }
         for (int i = 0; i < MAX_SHOTS; i++) {
-            bullets.add(new Bullet());
+            bullets.add(new Bullet(this, explodeListener));
         }
     }
 
     public String getName() {
         return name;
+    }
+
+    public TankState getState() {
+        return state;
     }
 
     public void setState(TankState state) {
@@ -63,7 +67,7 @@ public class Tank extends GameObject {
     }
 
     public void fire() {
-        if (canFire) {
+        if (canFire && state != TankState.EXPLODED) {
             canFire = false;
             Optional<Bullet> availableBullet = bullets.stream().filter(bullet -> !bullet.isAvailable()).findFirst();
             availableBullet.ifPresent(bullet -> bullet.setUp(getX(), getY(), direction));

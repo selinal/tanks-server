@@ -6,6 +6,7 @@ package com.sbt.codeit.core.model;
 public enum TankState {
 
     STAYING,
-    MOVING
+    MOVING,
+    EXPLODED
 
 }

@@ -45,12 +45,21 @@ public class FieldHelper {
         return character.equals('#');
     }
 
+    public static boolean isBullet(ArrayList<ArrayList<Character>> field, float x, float y) {
+        Character character = field.get((int) y).get((int) x);
+        return character.equals('x');
+    }
+
+    public static boolean isTank(ArrayList<ArrayList<Character>> field, float x, float y) {
+        return !isEmpty(field, x, y) && !isWall(field, x, y) && !isBullet(field, x, y);
+    }
+
     public static void clearCell(ArrayList<ArrayList<Character>> field, float x, float y) {
         field.get((int)y).set((int)x, ' ');
     }
 
-    public static void addTankToCell(ArrayList<ArrayList<Character>> field, float x, float y) {
-        field.get((int)y).set((int)x, 'T');
+    public static void addTankToCell(ArrayList<ArrayList<Character>> field, String name, float x, float y) {
+        field.get((int)y).set((int)x, name.charAt(0));
     }
 
     public static void addBulletToCell(ArrayList<ArrayList<Character>> field, float x, float y) {

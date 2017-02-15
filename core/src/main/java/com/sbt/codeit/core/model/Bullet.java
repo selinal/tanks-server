@@ -15,8 +15,12 @@ public class Bullet extends GameObject {
 
     public static final float SPEED = 10;
     private boolean available;
+    private TankExplodeListener explodeListener;
+    private Tank owner;
 
-    public Bullet() {
+    public Bullet(Tank owner, TankExplodeListener explodeListener) {
+        this.owner = owner;
+        this.explodeListener = explodeListener;
         position.add(new ArrayList<>(Collections.singletonList(new Vector2())));
     }
 
@@ -55,7 +59,12 @@ public class Bullet extends GameObject {
         if (isOnTheField()) {
             fixStuck();
             if (!FieldHelper.isEmpty(field, getX(), getY())) {
-                explode();
+                if(FieldHelper.isWall(field, getX(), getY())) {
+                    explode();
+                } else if(FieldHelper.isTank(field, getX(), getY())) {
+                    setAvailable(false);
+                    explodeListener.hit(owner, getX(), getY());
+                }
             }
         } else {
             setAvailable(false);
@@ -79,13 +88,13 @@ public class Bullet extends GameObject {
         if(direction == Direction.UP || direction == Direction.DOWN) {
             for (int x = getX() - SIZE / 2; x <= getX() + SIZE / 2; x++) {
                 if(FieldHelper.isWall(field, x, getY())) {
-                    field.get(getY()).set(x, ' ');
+                    FieldHelper.clearCell(field, x, getY());
                 }
             }
         } else {
             for (int y = getY() - SIZE / 2; y <= getY() + SIZE / 2; y++) {
                 if(FieldHelper.isWall(field, getX(), y)) {
-                    field.get(y).set(getX(), ' ');
+                    FieldHelper.clearCell(field, getX(), y);
                 }
             }
         }
