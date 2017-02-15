@@ -23,10 +23,14 @@ public class Tank extends GameObject {
     private ArrayList<Bullet> bullets = new ArrayList<>();
     private TankState state = TankState.STAYING;
     private volatile boolean canFire = true;
+    private String name;
     private int color;
     private int model;
 
-    public Tank(float x, float y) {
+    public Tank(float x, float y, String name, int color, int model) {
+        this.name = name;
+        this.color = color;
+        this.model = model;
         for (int i = 0; i < SIZE; i++) {
             position.add(new ArrayList<>());
             for (int j = 0; j < SIZE; j++) {
@@ -38,13 +42,12 @@ public class Tank extends GameObject {
         }
     }
 
-    public void setState(TankState state) {
-        this.state = state;
+    public String getName() {
+        return name;
     }
 
-    public void setType(int color, int model) {
-        this.color = color;
-        this.model = model;
+    public void setState(TankState state) {
+        this.state = state;
     }
 
     public int getColor() {

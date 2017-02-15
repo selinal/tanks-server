@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
  */
 public interface GameController extends Remote {
 
-    void register(ServerListener serverListener) throws RemoteException;
+    void register(ServerListener serverListener, String name) throws RemoteException;
     void start(ServerListener serverListener) throws RemoteException;
     void stop(ServerListener serverListener) throws  RemoteException;
     void up(ServerListener serverListener) throws RemoteException;

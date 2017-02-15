@@ -1,13 +1,12 @@
 package com.sbt.codeit.core.view;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.sbt.codeit.core.model.Bullet;
 import com.sbt.codeit.core.model.Tank;
 import com.sbt.codeit.core.model.World;
@@ -23,11 +22,13 @@ public class Drawer {
     private World world;
     private Texture wall;
     private Texture bulletTexture;
+    private Texture gray;
     private SpriteBatch batch;
-    private ShapeRenderer shapeRenderer;
     private OrthographicCamera camera;
+    private BitmapFont font = new BitmapFont(true);
     private float cellSize;
     private final TextureRegion[][] tanks;
+    private final float rightEdgeOfField;
 
     public Drawer(World world) {
         this.world = world;
@@ -35,10 +36,12 @@ public class Drawer {
         camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         wall = new Texture(Gdx.files.internal("brick.jpg"));
         bulletTexture = new Texture(Gdx.files.internal("bullet.png"));
+        gray = new Texture(Gdx.files.internal("gray.png"));
         tanks = TextureRegion.split(new Texture(Gdx.files.internal("tanks.png")), 60, 80);
         batch = new SpriteBatch();
-        shapeRenderer = new ShapeRenderer();
         cellSize = Gdx.graphics.getHeight() / (float) FieldHelper.FIELD_HEIGHT;
+        rightEdgeOfField = FieldHelper.FIELD_WIDTH * cellSize;
+
     }
 
     public void draw() {
@@ -49,16 +52,18 @@ public class Drawer {
         batch.begin();
         drawMap();
         drawTanks();
-        batch.end();
         drawInfoPanel();
+        batch.end();
     }
 
     private void drawInfoPanel() {
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        float rightEdgeOfField = FieldHelper.FIELD_WIDTH * cellSize;
-        shapeRenderer.rect(rightEdgeOfField, 0, Gdx.graphics.getWidth() - rightEdgeOfField, Gdx.graphics.getHeight());
-        shapeRenderer.end();
+        batch.draw(gray, rightEdgeOfField, 0, Gdx.graphics.getWidth() - rightEdgeOfField, Gdx.graphics.getHeight());
+        int i = 0;
+        for (Tank tank : world.getTanks()) {
+            batch.draw(tanks[tank.getColor()][tank.getModel()], rightEdgeOfField + 5, 25 * i + 5, 20, 20);
+            font.draw(batch, tank.getName(), rightEdgeOfField + 30, 25 * i + 10);
+            i++;
+        }
     }
 
     private void drawMap() {

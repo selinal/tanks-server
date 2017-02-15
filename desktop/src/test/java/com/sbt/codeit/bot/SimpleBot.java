@@ -28,7 +28,7 @@ public class SimpleBot implements ServerListener {
             Registry registry = LocateRegistry.getRegistry(HOST, PORT);
             server = (GameController) registry.lookup(STUB_NAME);
             client = (ServerListener) UnicastRemoteObject.exportObject(simpleBot, 0);
-            server.register(client);
+            server.register(client, "SimpleBot");
             server.start(client);
             randomDirection();
         } catch (Exception e) {
@@ -43,7 +43,7 @@ public class SimpleBot implements ServerListener {
             try {
                 while (true) {
                     server.fire(client);
-                    TimeUnit.MILLISECONDS.sleep(2500);
+                    TimeUnit.SECONDS.sleep(2);
                 }
             } catch (RemoteException | InterruptedException e) {
                 e.printStackTrace();

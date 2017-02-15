@@ -38,28 +38,32 @@ public class World {
         }, 0, (long)(1 / Bullet.SPEED * 1000));
     }
 
-    public void addTank(ServerListener listener) {
-        Tank tank = createRandomTank();
+    public void addTank(ServerListener listener, String name) {
+        Tank tank = createRandomTank(name);
         tanks.put(listener, tank);
     }
 
-    private Tank createRandomTank() {
-        Tank tank;
+    private Tank createRandomTank(String name) {
+        int x;
+        int y;
         switch (random.nextInt(4)) {
             case 0:
-                tank = new Tank(0, 0);
+                x = 0;
+                y = 0;
                 break;
             case 1:
-                tank = new Tank(FIELD_WIDTH - Tank.SIZE, 0);
+                x = FIELD_WIDTH - Tank.SIZE;
+                y = 0;
                 break;
             case 2:
-                tank = new Tank(0, FIELD_HEIGHT - Tank.SIZE);
+                x = 0;
+                y = FIELD_HEIGHT - Tank.SIZE;
                 break;
             default:
-                tank = new Tank(FIELD_WIDTH - Tank.SIZE, FIELD_HEIGHT - Tank.SIZE);
+                x = FIELD_WIDTH - Tank.SIZE;
+                y = FIELD_HEIGHT - Tank.SIZE;
         }
-        tank.setType(random.nextInt(3), random.nextInt(3));
-        return tank;
+        return new Tank(x, y, name, random.nextInt(3), random.nextInt(3));
     }
 
     public Tank getTank(ServerListener listener) {
