@@ -22,8 +22,8 @@ public class GameControllerImpl implements GameController {
 
     @Override
     public void register(ServerListener serverListener, String name) throws RemoteException {
-        if(name.startsWith("#") || name.startsWith("x")) {
-            throw new RemoteException("В регистрации отказано. Не используйте имена, начинающиеся на # и x");
+        if(!name.matches("[A-ZА-Я][A-z 1-9]*")) {
+            throw new RemoteException("В регистрации отказано: некорректное имя.");
         }
         world.addTank(serverListener, name);
     }

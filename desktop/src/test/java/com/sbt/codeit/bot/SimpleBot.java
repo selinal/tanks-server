@@ -73,8 +73,12 @@ public class SimpleBot implements ServerListener {
     }
 
     private static String createName() {
-        byte[] bytes = new byte[20];
-        new Random().nextBytes(bytes);
-        return new String(bytes);
+        Random random = new Random();
+        char[] chars = "ABCDEFGHIJKLMNOPQRSTYUWXYZ".toCharArray();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < random.nextInt(10) + 3; i++) {
+            stringBuilder.append(chars[random.nextInt(chars.length)]);
+        }
+        return stringBuilder.toString();
     }
 }
