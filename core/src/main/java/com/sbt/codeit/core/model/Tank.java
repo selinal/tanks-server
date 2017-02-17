@@ -24,22 +24,45 @@ public class Tank extends GameObject {
     private TankState state = TankState.STAYING;
     private volatile boolean canFire = true;
     private String name;
+    private Character id;
     private int color;
     private int model;
+    private int hits;
 
-    public Tank(TankExplodeListener explodeListener, float x, float y, String name, int color, int model) {
+    public Tank(TankExplodeListener explodeListener, Character id, String name, int color, int model) {
         this.name = name;
         this.color = color;
         this.model = model;
+        this.id = id;
         for (int i = 0; i < SIZE; i++) {
             position.add(new ArrayList<>());
             for (int j = 0; j < SIZE; j++) {
-                position.get(i).add(new Vector2(x + j, y + i));
+                position.get(i).add(new Vector2());
             }
         }
         for (int i = 0; i < MAX_SHOTS; i++) {
             bullets.add(new Bullet(this, explodeListener));
         }
+    }
+
+    public void moveTo(Vector2 pos) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                position.get(i).set(j, new Vector2(pos.x + j, pos.y + i));
+            }
+        }
+    }
+
+    public int getHits() {
+        return hits;
+    }
+
+    public Character getId() {
+        return id;
+    }
+
+    public void incrementHits() {
+        hits++;
     }
 
     public String getName() {

@@ -56,17 +56,21 @@ public class Bullet extends GameObject {
     @Override
     public void update(ArrayList<ArrayList<Character>> field) {
         super.update(field);
-        if (isOnTheField()) {
+        if (isOnTheField(getX(), getY())) {
             fixStuck();
             if (!FieldHelper.isEmpty(field, getX(), getY())) {
                 if(FieldHelper.isWall(field, getX(), getY())) {
                     explode();
                 } else if(FieldHelper.isTank(field, getX(), getY())) {
+                    FieldHelper.clearCell(field, getPreviousX(), getPreviousY());
                     setAvailable(false);
                     explodeListener.hit(owner, getX(), getY());
                 }
             }
         } else {
+            if(isOnTheField(getPreviousX(), getPreviousY())) {
+                FieldHelper.clearCell(field, getPreviousX(), getPreviousY());
+            }
             setAvailable(false);
         }
     }
@@ -77,14 +81,15 @@ public class Bullet extends GameObject {
         }
     }
 
-    public boolean isOnTheField() {
-        return getX() >= 0 && getY() >= 0 && getY() < FieldHelper.FIELD_HEIGHT && getX() < FieldHelper.FIELD_WIDTH;
+    public boolean isOnTheField(int x, int y) {
+        return x >= 0 && y >= 0 && y < FieldHelper.FIELD_HEIGHT && x < FieldHelper.FIELD_WIDTH;
     }
 
     public void explode() {
         if(!isAvailable()) {
             return;
         }
+        FieldHelper.clearCell(field, getPreviousX(), getPreviousY());
         if(direction == Direction.UP || direction == Direction.DOWN) {
             for (int x = getX() - SIZE / 2; x <= getX() + SIZE / 2; x++) {
                 if(FieldHelper.isWall(field, x, getY())) {

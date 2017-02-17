@@ -58,8 +58,8 @@ public class FieldHelper {
         field.get((int)y).set((int)x, ' ');
     }
 
-    public static void addTankToCell(ArrayList<ArrayList<Character>> field, String name, float x, float y) {
-        field.get((int)y).set((int)x, name.charAt(0));
+    public static void addTankToCell(ArrayList<ArrayList<Character>> field, Character id, float x, float y) {
+        field.get((int)y).set((int)x, id);
     }
 
     public static void addBulletToCell(ArrayList<ArrayList<Character>> field, float x, float y) {

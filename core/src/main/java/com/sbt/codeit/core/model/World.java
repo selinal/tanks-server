@@ -1,7 +1,9 @@
 package com.sbt.codeit.core.model;
 
+import com.badlogic.gdx.math.Vector2;
 import com.sbt.codeit.core.control.ServerListener;
 import com.sbt.codeit.core.util.FieldHelper;
+import com.sbt.codeit.core.util.IdHelper;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -50,6 +52,87 @@ public class World implements TankExplodeListener {
     }
 
     private Tank createRandomTank(String name) {
+        Tank tank = new Tank(this, IdHelper.getId(name), name, currentColor, random.nextInt(3));
+        tank.moveTo(createRandomPosition());
+        currentColor = currentColor < 2 ? currentColor + 1 : 0;
+        return tank;
+    }
+
+    public Tank getTank(ServerListener listener) {
+        return tanks.get(listener);
+    }
+
+    public Collection<Tank> getTanks() {
+        return tanks.values();
+    }
+
+    private synchronized void updateTanks() {
+        for (Tank tank : tanks.values()) {
+            if (tank.getState() == TankState.EXPLODED) {
+                continue;
+            }
+            tank.update(field);
+            synchronized (this) {
+                for (int i = 0; i < Tank.SIZE; i++) {
+                    for (int j = 0; j < Tank.SIZE; j++) {
+                        FieldHelper.clearCell(field, tank.getPreviousX() + j, tank.getPreviousY() + i);
+                    }
+                }
+                for (int i = 0; i < Tank.SIZE; i++) {
+                    for (int j = 0; j < Tank.SIZE; j++) {
+                        FieldHelper.addTankToCell(field, tank.getId(), tank.getX() + j, tank.getY() + i);
+                    }
+                }
+            }
+        }
+        notifyListeners();
+    }
+
+    private synchronized void updateBullets() {
+        for (Tank tank : tanks.values()) {
+            tank.getBullets().stream().filter(Bullet::isAvailable).forEach(bullet -> {
+                bullet.update(field);
+                if (bullet.isAvailable()) {
+                    FieldHelper.clearCell(field, bullet.getPreviousX(), bullet.getPreviousY());
+                    FieldHelper.addBulletToCell(field, bullet.getX(), bullet.getY());
+                }
+            });
+        }
+    }
+
+    private void notifyListeners() {
+        for (ServerListener listener : tanks.keySet()) {
+            try {
+                listener.update(field);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public synchronized void hit(Tank owner, int x, int y) {
+        Tank tank = getTankById(field.get(y).get(x));
+        for (int i = 0; i < Tank.SIZE; i++) {
+            for (int j = 0; j < Tank.SIZE; j++) {
+                FieldHelper.clearCell(field, tank.getPreviousX() + j, tank.getPreviousY() + i);
+                FieldHelper.clearCell(field, tank.getX() + j, tank.getY() + i);
+            }
+        }
+        tank.moveTo(createRandomPosition());
+        owner.incrementHits();
+    }
+
+    private Tank getTankById(Character character) {
+        for (Tank tank : getTanks()) {
+            if (tank.getId().equals(character)) {
+                return tank;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+
+    private Vector2 createRandomPosition() {
         int x;
         int y;
         switch (random.nextInt(4)) {
@@ -69,76 +152,7 @@ public class World implements TankExplodeListener {
                 x = FIELD_WIDTH - Tank.SIZE;
                 y = FIELD_HEIGHT - Tank.SIZE;
         }
-        Tank tank = new Tank(this, x, y, name, currentColor, random.nextInt(3));
-        currentColor = currentColor < 2 ? currentColor + 1 : 0;
-        return tank;
-    }
-
-    public Tank getTank(ServerListener listener) {
-        return tanks.get(listener);
-    }
-
-    public Collection<Tank> getTanks() {
-        return tanks.values();
-    }
-
-    private void updateTanks() {
-        for (Tank tank : tanks.values()) {
-            if(tank.getState() == TankState.EXPLODED) {
-                continue;
-            }
-            tank.update(field);
-            for (int i = 0; i < Tank.SIZE; i++) {
-                for (int j = 0; j < Tank.SIZE; j++) {
-                    FieldHelper.clearCell(field, tank.getPreviousX() + j, tank.getPreviousY() + i);
-                    FieldHelper.addTankToCell(field, tank.getName(), tank.getX() + j, tank.getY() + i);
-                }
-            }
-        }
-        notifyListeners();
-    }
-
-    private void updateBullets() {
-        for (Tank tank : tanks.values()) {
-            tank.getBullets().stream().filter(Bullet::isAvailable).forEach(bullet -> {
-                bullet.update(field);
-                if (bullet.isOnTheField() && FieldHelper.isEmpty(field, bullet.getX(), bullet.getY())) {
-                    FieldHelper.clearCell(field, bullet.getPreviousX(), bullet.getPreviousY());
-                    FieldHelper.addBulletToCell(field, bullet.getX(), bullet.getY());
-                }
-            });
-        }
-    }
-
-    private void notifyListeners() {
-        for (ServerListener listener : tanks.keySet()) {
-            try {
-                listener.update(field);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public void hit(Tank owner, int x, int y) {
-        Tank tank = getTankByChar(field.get(y).get(x));
-        tank.setState(TankState.EXPLODED);
-        for (int i = 0; i < Tank.SIZE; i++) {
-            for (int j = 0; j < Tank.SIZE; j++) {
-                FieldHelper.clearCell(field, tank.getPreviousX() + j, tank.getPreviousY() + i);
-                FieldHelper.clearCell(field, tank.getX() + j, tank.getY() + i);
-            }
-        }
-    }
-
-    private Tank getTankByChar(Character character) {
-        for (Tank tank : getTanks()) {
-            if(tank.getName().charAt(0) == character.charValue()) {
-                return tank;
-            }
-        }
-        throw new IllegalArgumentException();
+        return new Vector2(x, y);
     }
 
 }

@@ -63,6 +63,7 @@ public class Drawer {
         for (Tank tank : world.getTanks()) {
             batch.draw(tanks[tank.getColor()][tank.getModel()], rightEdgeOfField + 5, 25 * i + 5, 20, 20);
             font.draw(batch, tank.getName(), rightEdgeOfField + 30, 25 * i + 10);
+            font.draw(batch, String.valueOf(tank.getHits()), Gdx.graphics.getWidth() - 20, 25 * i + 10);
             i++;
         }
     }
