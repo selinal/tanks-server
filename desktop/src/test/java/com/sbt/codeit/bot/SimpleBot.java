@@ -3,13 +3,11 @@ package com.sbt.codeit.bot;
 import com.sbt.codeit.core.control.GameController;
 import com.sbt.codeit.core.control.ServerListener;
 
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Roman on 08.02.2017.
@@ -22,6 +20,8 @@ public class SimpleBot implements ServerListener {
     private static GameController server;
     private static ServerListener client;
 
+    private int i = 0;
+
     public static void main(String... args) {
         try {
             SimpleBot simpleBot = new SimpleBot();
@@ -30,7 +30,25 @@ public class SimpleBot implements ServerListener {
             client = (ServerListener) UnicastRemoteObject.exportObject(simpleBot, 0);
             server.register(client, createName());
             server.start(client);
-            randomDirection();
+            synchronized (simpleBot) {
+                simpleBot.wait();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    @Override
+    public void update(ArrayList<ArrayList<Character>> field) {
+        try {
+            if(i % 5 == 0) {
+                randomDirection();
+            }
+            if(i % 6 == 0) {
+                server.fire(client);
+            }
+            i++;
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -39,37 +57,19 @@ public class SimpleBot implements ServerListener {
 
     public static void randomDirection() throws Exception {
         Random random = new Random();
-        new Thread(() -> {
-            try {
-                while (true) {
-                    server.fire(client);
-                    TimeUnit.SECONDS.sleep(2);
-                }
-            } catch (RemoteException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        while (true) {
-            switch (random.nextInt(4)) {
-                case 0:
-                    server.up(client);
-                    break;
-                case 1:
-                    server.down(client);
-                    break;
-                case 2:
-                    server.left(client);
-                    break;
-                case 3:
-                    server.right(client);
-            }
-            TimeUnit.SECONDS.sleep(1);
+        switch (random.nextInt(4)) {
+            case 0:
+                server.up(client);
+                break;
+            case 1:
+                server.down(client);
+                break;
+            case 2:
+                server.left(client);
+                break;
+            case 3:
+                server.right(client);
         }
-    }
-
-    @Override
-    public void update(ArrayList<ArrayList<Character>> field) {
-        //nothing
     }
 
     private static String createName() {

@@ -17,11 +17,13 @@ import static com.sbt.codeit.core.util.FieldHelper.FIELD_WIDTH;
  */
 public class World implements TankExplodeListener {
 
+    private final static int HEARTBEAT_DELAY = 100;
     private final ConcurrentHashMap<ServerListener, Tank> tanks = new ConcurrentHashMap<>();
     private final ArrayList<ArrayList<Character>> field = FieldHelper.loadField();
     private final Random random = new Random();
 
     private int currentColor;
+    private int heartBeats = 0;
 
     public World() {
         currentColor = random.nextInt(3);
@@ -35,15 +37,13 @@ public class World implements TankExplodeListener {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                updateTanks();
-            }
-        }, 0, (long) (1 / Tank.SPEED * 1000));
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
+                if(heartBeats % 2 == 0) {
+                    updateTanks();
+                }
                 updateBullets();
+                heartBeats++;
             }
-        }, 0, (long) (1 / Bullet.SPEED * 1000));
+        }, 0, HEARTBEAT_DELAY);
     }
 
     public void addTank(ServerListener listener, String name) {
@@ -72,6 +72,10 @@ public class World implements TankExplodeListener {
                 continue;
             }
             tank.update(field);
+            if(heartBeats % 20 == 0) {
+                tank.enableFire();
+                heartBeats = 0;
+            }
             synchronized (this) {
                 for (int i = 0; i < Tank.SIZE; i++) {
                     for (int j = 0; j < Tank.SIZE; j++) {

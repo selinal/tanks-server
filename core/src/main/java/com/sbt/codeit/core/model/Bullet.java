@@ -13,7 +13,6 @@ import static com.sbt.codeit.core.model.Tank.SIZE;
  */
 public class Bullet extends GameObject {
 
-    public static final float SPEED = 10;
     private boolean available;
     private TankExplodeListener explodeListener;
     private Tank owner;
