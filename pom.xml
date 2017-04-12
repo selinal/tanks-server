@@ -4,7 +4,7 @@
 
 	<groupId>com.sbt.codeit</groupId>
 	<artifactId>tanks-server</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>pom</packaging>
 	<name>TanksGame Parent</name>
 
