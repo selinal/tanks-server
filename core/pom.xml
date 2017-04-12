@@ -17,6 +17,11 @@
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.sbt.codeit</groupId>
+			<artifactId>tank-controller-api</artifactId>
+			<version>${parent.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

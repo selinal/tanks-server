@@ -14,9 +14,6 @@ import java.util.Random;
  */
 public class SimpleBot implements ServerListener {
 
-    private static final String HOST = "localhost";
-    private static final int PORT = 2017;
-    private static final String STUB_NAME = "GameController";
     private static GameController server;
     private static ServerListener client;
 
@@ -30,9 +27,9 @@ public class SimpleBot implements ServerListener {
             client = (ServerListener) UnicastRemoteObject.exportObject(simpleBot, 0);
             server.register(client, createName());
             server.start(client);
-            synchronized (simpleBot) {
+//            synchronized (simpleBot) {
                 simpleBot.wait();
-            }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
