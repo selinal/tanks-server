@@ -76,7 +76,7 @@ public class World implements TankExplodeListener {
                 tank.enableFire();
                 heartBeats = 0;
             }
-            synchronized (this) {
+//            synchronized (this) {
                 for (int i = 0; i < Tank.SIZE; i++) {
                     for (int j = 0; j < Tank.SIZE; j++) {
                         FieldHelper.clearCell(field, tank.getPreviousX() + j, tank.getPreviousY() + i);
@@ -87,7 +87,7 @@ public class World implements TankExplodeListener {
                         FieldHelper.addTankToCell(field, tank.getId(), tank.getX() + j, tank.getY() + i);
                     }
                 }
-            }
+//            }
         }
         notifyListeners();
     }

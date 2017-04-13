@@ -22,7 +22,12 @@
 			<artifactId>tank-controller-api</artifactId>
 			<version>${parent.version}</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.sbt.codeit</groupId>
+            <artifactId>tank-game-common</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

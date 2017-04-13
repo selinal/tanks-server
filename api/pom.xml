@@ -13,5 +13,4 @@
     <artifactId>tank-controller-api</artifactId>
     <packaging>jar</packaging>
     <name>TanksGame Controller API</name>
-
 </project>

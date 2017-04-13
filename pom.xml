@@ -41,6 +41,12 @@
 				<classifier>natives-armeabi-v7a</classifier>
 				<scope>provided</scope>
 			</dependency>
+
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>21.0</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -81,8 +87,9 @@
 
 	<modules>
 		<module>core</module>
-		<module>tank-controller-api</module>
+		<module>api</module>
 		<module>desktop</module>
+		<module>common</module>
 	</modules>
 
 </project>
