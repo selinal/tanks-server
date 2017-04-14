@@ -1,3 +1,4 @@
+/*
 package com.sbt.codeit.core.control;
 
 import com.sbt.codeit.core.model.Tank;
@@ -9,9 +10,11 @@ import static com.sbt.codeit.core.model.Direction.*;
 import static com.sbt.codeit.core.model.TankState.MOVING;
 import static com.sbt.codeit.core.model.TankState.STAYING;
 
+*/
 /**
  * Created by Roman on 08.02.2017.
- */
+ *//*
+
 public class GameControllerImpl implements GameController {
 
     private World world;
@@ -32,7 +35,7 @@ public class GameControllerImpl implements GameController {
     public void start(ServerListener serverListener) throws RemoteException {
         Tank tank = world.getTank(serverListener);
         if(tank != null) {
-            tank.setState(MOVING);
+            tank.setState(MOVE);
         }
     }
 
@@ -85,3 +88,4 @@ public class GameControllerImpl implements GameController {
     }
 
 }
+*/

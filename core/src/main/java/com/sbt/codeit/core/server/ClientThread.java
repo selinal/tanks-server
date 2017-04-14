@@ -34,15 +34,15 @@ public class ClientThread implements Runnable {
                     sb.append(line);
                 }
                 mapManager.createMap(sb.toString());
-                if(WorldMapManager.validate(map, serverMap)){
-                    WorldMapManager.mergeMaps(map, serverMap)
-                }
-                writer.println(map);
+//                if(WorldMapManager.validate(map, serverMap)){
+//                    WorldMapManager.mergeMaps(map, serverMap)
+//                }
+//                writer.println(map);
             }
 
-            in.close();
-            out.close();
-            clientSocket.close();
+//            in.close();
+//            out.close();
+//            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

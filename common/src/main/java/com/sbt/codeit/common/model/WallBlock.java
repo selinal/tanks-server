@@ -6,8 +6,14 @@ package com.sbt.codeit.common.model;
 public class WallBlock extends BaseGameObject {
 
     public WallBlock() {
-        this.size.width = 1;
-        this.size.height = 1;
+        this.setSize(new Size(1,1));
+    }
+
+    public static Character CHARACTER = '1';
+
+    @Override
+    public Character getCharacter() {
+        return CHARACTER;
     }
 
     @Override

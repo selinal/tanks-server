@@ -25,8 +25,8 @@ public class SimpleBot implements ServerListener {
             Registry registry = LocateRegistry.getRegistry(HOST, PORT);
             server = (GameController) registry.lookup(STUB_NAME);
             client = (ServerListener) UnicastRemoteObject.exportObject(simpleBot, 0);
-            server.register(client, createName());
-            server.start(client);
+//            server.register(client, createName());
+//            server.start(client);
 //            synchronized (simpleBot) {
                 simpleBot.wait();
 //            }
@@ -43,7 +43,7 @@ public class SimpleBot implements ServerListener {
                 randomDirection();
             }
             if(i % 6 == 0) {
-                server.fire(client);
+//                server.fire(client);
             }
             i++;
         } catch (Exception e) {
@@ -56,16 +56,16 @@ public class SimpleBot implements ServerListener {
         Random random = new Random();
         switch (random.nextInt(4)) {
             case 0:
-                server.up(client);
+//                server.up(client);
                 break;
             case 1:
-                server.down(client);
+//                server.down(client);
                 break;
             case 2:
-                server.left(client);
+//                server.left(client);
                 break;
             case 3:
-                server.right(client);
+//                server.right(client);
         }
     }
 
