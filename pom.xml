@@ -87,9 +87,12 @@
 
 	<modules>
 		<module>core</module>
-		<module>api</module>
 		<module>desktop</module>
-		<module>common</module>
+
+		<module>tanks-api</module>
+		<module>tanks-server-core</module>
+		<module>tanks-client-core</module>
+
 	</modules>
 
 </project>

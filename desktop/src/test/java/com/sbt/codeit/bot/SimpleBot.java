@@ -1,7 +1,7 @@
 package com.sbt.codeit.bot;
 
-import com.sbt.codeit.core.control.GameController;
-import com.sbt.codeit.core.control.ServerListener;
+import com.sbt.codeit.core.GameController;
+import com.sbt.codeit.core.ServerListener;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;

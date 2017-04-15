@@ -1,7 +1,9 @@
 package com.sbt.codeit.core.server;
 
-import com.sbt.codeit.common.WorldMap;
-import com.sbt.codeit.core.util.WorldMapManager;
+import com.sbt.codeit.server.controller.GameController;
+import com.sbt.codeit.server.controller.TankController;
+import com.sbt.codeit.server.provider.ClientInputParser;
+import com.sbt.codeit.core.Command;
 
 import java.io.*;
 
@@ -9,42 +11,61 @@ import java.io.*;
  * Created by sbt-selin-an on 13.04.2017.
  */
 public class ClientThread implements Runnable {
-    InputStream in;
-    OutputStream out;
-    WorldMapManager mapManager;
+    private BufferedReader reader;
+    private PrintWriter writer;
+    private GameController gameController;
+    private ClientInputParser clientInputParser;
+    private String tankName;
 
-    public ClientThread(WorldMapManager mapManager, InputStream in, OutputStream out) {
-        this.in = in;
-        this.out = out;
-        this.mapManager = mapManager;
+    public ClientThread(GameController gameController, InputStream in, OutputStream out) {
+        this.gameController = gameController;
+        reader = new BufferedReader(new InputStreamReader(in));
+        writer = new PrintWriter(out, false);
+        clientInputParser = new ClientInputParser();
     }
 
     @Override
     public void run() {
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            PrintWriter writer = new PrintWriter(out, true);
-
-            for (;;) {
-
-                StringBuffer sb = new StringBuffer();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    //create map from input stream
-                    sb.append(line);
-                }
-                mapManager.createMap(sb.toString());
-//                if(WorldMapManager.validate(map, serverMap)){
-//                    WorldMapManager.mergeMaps(map, serverMap)
-//                }
-//                writer.println(map);
+        //client registration
+        String input = getFromClient();
+        tankName = clientInputParser.parseClientRegistration(input);
+        if (gameController.register(tankName)) {
+            //registration successful
+            sendToClient(Command.REGISTERATION.toString() + tankName);
+            //wait for game start
+            while (!gameController.isGameStarted()) {
             }
+            while (true) {
+                //send map
+                gameController.printState(writer);
+                //read command from input stream
+                input = getFromClient();
+                Command command = clientInputParser.parseCommand(input);
+                //perform tank move (parse command)
+                TankController tankController = gameController.getTankController(tankName);
+                tankController.executeCommand(command);
 
-//            in.close();
-//            out.close();
-//            clientSocket.close();
+            }
+        }
+
+
+    }
+
+    private String getFromClient() {
+        String line = null;
+        StringBuffer stringBuffer = new StringBuffer();
+        try {
+            while ((line = reader.readLine()) != null) {
+                stringBuffer.append(line);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return stringBuffer.toString();
+    }
+
+    private void sendToClient(String text) {
+        writer.println(text);
+        writer.flush();
     }
 }

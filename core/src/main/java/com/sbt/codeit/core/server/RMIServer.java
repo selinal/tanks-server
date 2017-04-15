@@ -1,6 +1,6 @@
 package com.sbt.codeit.core.server;
 
-import com.sbt.codeit.core.control.GameController;
+import com.sbt.codeit.core.GameController;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;

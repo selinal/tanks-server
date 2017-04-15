@@ -1,6 +1,6 @@
 package com.sbt.codeit.core.server;
 
-import com.sbt.codeit.core.util.WorldMapManager;
+import com.sbt.codeit.server.controller.GameController;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -17,35 +17,37 @@ public class TankServer {
 
     public static int SERVER_PORT = Integer.parseInt(System.getProperties().getProperty("server.port"));
     public static int TANKS_COUNT = Integer.parseInt(System.getProperties().getProperty("tanks.count"));
-    private List<Runnable> tanktForBattle;
+    private List<Runnable> tanktThreads;
+    private volatile GameController gameController;
 
 
     public void init() {
         try {
             //init server
             ServerSocket servers = new ServerSocket(SERVER_PORT);
-            ExecutorService pool = Executors.newFixedThreadPool(TANKS_COUNT + 1);
+            ExecutorService pool = Executors.newFixedThreadPool(10);
 
             //init map
-            WorldMapManager mapManager = new WorldMapManager();
+            gameController = new GameController();
 
             //init tanks
-            tanktForBattle = new ArrayList<>(TANKS_COUNT);
+            tanktThreads = new ArrayList<>(TANKS_COUNT);
             int acc = 0;
             while (true) {
                 //waiting for client connections
-                System.out.print("Waiting for tanks...");
+                System.out.println("Server started...");
+                System.out.println("Waiting for tanks...");
                 Socket clientSocket = servers.accept();
                 System.out.println("Client connected");
 
-                Runnable tankThread = new ClientThread(mapManager, clientSocket.getInputStream(), clientSocket.getOutputStream());
-                tanktForBattle.add(tankThread);
+                Runnable tankThread = new ClientThread(gameController, clientSocket.getInputStream(), clientSocket.getOutputStream());
+                tanktThreads.add(tankThread);
                 acc++;
                 if (acc >= TANKS_COUNT)
                     break;
             }
-            //Start battle
-            for (Runnable r : tanktForBattle) {
+            //Start tank threads
+            for (Runnable r : tanktThreads) {
                 pool.execute(r);
             }
             //Check winner

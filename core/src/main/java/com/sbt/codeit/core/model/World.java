@@ -1,7 +1,7 @@
 package com.sbt.codeit.core.model;
 
 import com.badlogic.gdx.math.Vector2;
-import com.sbt.codeit.core.control.ServerListener;
+import com.sbt.codeit.core.ServerListener;
 import com.sbt.codeit.core.util.FieldHelper;
 import com.sbt.codeit.core.util.IdHelper;
 
