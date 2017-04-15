@@ -1,4 +1,4 @@
-package com.sbt.codeit.core.server;
+package com.sbt.codeit.server;
 
 import com.sbt.codeit.server.controller.GameController;
 

@@ -1,5 +1,6 @@
-package com.sbt.codeit.core.server;
+package com.sbt.codeit.server;
 
+import com.sbt.codeit.core.TechnicalInfo;
 import com.sbt.codeit.server.controller.GameController;
 import com.sbt.codeit.server.controller.TankController;
 import com.sbt.codeit.server.provider.ClientInputParser;
@@ -31,7 +32,7 @@ public class ClientThread implements Runnable {
         tankName = clientInputParser.parseClientRegistration(input);
         if (gameController.register(tankName)) {
             //registration successful
-            sendToClient(Command.REGISTERATION.toString() + tankName);
+            sendToClient(TechnicalInfo.REGISTRATION.toString() + tankName);
             //wait for game start
             while (!gameController.isGameStarted()) {
             }
@@ -46,6 +47,8 @@ public class ClientThread implements Runnable {
                 tankController.executeCommand(command);
 
             }
+        }else{
+            sendToClient(TechnicalInfo.REGISTRATION_FAIL.toString()+tankName);
         }
 
 

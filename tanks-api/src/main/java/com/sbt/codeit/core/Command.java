@@ -5,7 +5,6 @@ package com.sbt.codeit.core;
  */
 public enum Command {
 
-    REGISTRATION,
     START,
     STOP,
     UP,
@@ -15,8 +14,5 @@ public enum Command {
     FIRE,
     NONE;
 
-    @Override
-    public String toString() {
-        return this == REGISTRATION ? "client." + this + "=" : "client.command=" + this;
-    }
+
 }
